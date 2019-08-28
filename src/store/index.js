@@ -35,6 +35,22 @@ export default new Vuex.Store({
               commit('setCategories',categories)
               return state.categories
             })
+        },
+        fetchDetailMeetup({state,commit},meetupId){
+            axios.get(`/api/v1/meetups/${meetupId}`)
+            .then(res =>{
+                const meetup = res.data
+                commit('setDetailMeetup',meetup)
+                return state.meetup
+            })
+        },
+        fetchThreads({state,commit},meetupId){
+            axios.get(`/api/v1/threads?meetupId=${meetupId}`)
+            .then(res=>{
+              const threads = res.data
+              commit('setThreads',threads)
+              return state.threads
+            }) 
         }
     },
     // simple function untuk melakukan perubahan data
@@ -44,6 +60,12 @@ export default new Vuex.Store({
         },
         setCategories (state, categories){
             state.categories = categories
+        },
+        setDetailMeetup(state,meetup){
+            state.meetup = meetup
+        },
+        setThreads(state,threads){
+            state.threads = threads
         }
     }
 })
