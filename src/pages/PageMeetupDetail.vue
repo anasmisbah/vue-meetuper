@@ -259,8 +259,7 @@ export default {
     margin: 0;
     margin-right: 15px;
   }
-  .post-item {
-  }
+ 
   .media + .media {
     border: none;
     margin-top: 0;
