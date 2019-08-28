@@ -56,19 +56,19 @@
 </template>
 
 <script>
-import axios from 'axios'
+import {mapActions,mapState} from 'vuex'
   export default {
-    data () {
-      return {
-        meetups: []
-      }
+    computed : {
+      ...mapState({
+        meetups: state => state.meetups.items
+      })
     },
     created () {
-      axios.get('/api/v1/meetups')
-        .then(res => {
-          this.meetups = res.data
-        })
-    }
+      this.fetchMeetups()
+    },
+    methods: {
+      ...mapActions('meetups',['fetchMeetups'])
+    },
   }
 </script>
 

@@ -35,22 +35,26 @@
 <script>
   import CategoryItem from '@/components/CategoryItem'
   import MeetupItem from '@/components/MeetupItem'
+  import {mapActions,mapState} from 'vuex'
   export default {
     components:{
       CategoryItem,
       MeetupItem
     },
     computed: {
-      meetups (){
-        return this.$store.state.meetups
-      },
-      categories () {
-        return this.$store.state.categories
-      }
+      ...mapState({
+        meetups: state => state.meetups.items,
+        categories: state => state.categories.items
+      })
     },
      created() {
-       this.$store.dispatch('fetchMeetups')
-       this.$store.dispatch('fetchCategories')
+       this.fetchMeetups()
+       this.fetchCategories()
+       
+     },
+     methods: {
+       ...mapActions('meetups',['fetchMeetups']),
+       ...mapActions('categories',['fetchCategories'])
      },
   }
 </script>

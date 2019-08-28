@@ -136,22 +136,26 @@
 </template>
 
 <script>
+import {mapActions,mapState} from 'vuex'
 export default {
     created(){
         const meetupId = this.$route.params.id
-        this.$store.dispatch('fetchDetailMeetup',meetupId)
-        this.$store.dispatch('fetchThreads',meetupId)
+        this.fetchThreads(meetupId)
+        this.fetchDetailMeetup(meetupId)
     },
     computed:{
         meetupCreator (){
             return this.meetup.meetupCreator || ''
         },
-        meetup () {
-        return this.$store.state.meetup
-      },
-      threads () {
-        return this.$store.state.threads
-      }
+        ...mapState({
+          meetup : state => state.meetups.item,
+          threads : state => state.threads.items
+        })
+    },
+    methods:{
+      ...mapActions('meetups',['fetchDetailMeetup']),
+      ...mapActions('threads',['fetchThreads'])
+
     }
 }
 </script>
