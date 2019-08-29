@@ -23,7 +23,7 @@
         </div>
       </div>
     </div>
-    <div class="container">
+    <div v-if="pageLoader_isDataLoaded" class="container">
       <section class="section page-find">
         <div class="columns cover is-multiline">
           <div v-for="meetup of meetups" :key="meetup._id" class="column is-one-third" :style="{'min-height': '160px'}">
@@ -52,19 +52,32 @@
         </div>
       </section>
     </div>
+    <div v-else class="container">
+      <AppSpinner />
+    </div>
   </div>
 </template>
 
 <script>
-import {mapActions,mapState} from 'vuex'
+  import {mapActions,mapState} from 'vuex'
+  import PageLoader from '@/mixins/PageLoader'
+  import AppSpinner from '../components/shared/AppSpinner'
   export default {
+    components:{
+      AppSpinner
+    },
+    mixins:[PageLoader],
     computed : {
       ...mapState({
         meetups: state => state.meetups.items
       })
     },
     created () {
-      this.fetchMeetups()
+      Promise.all([this.fetchMeetups()])
+      .then(()=> this.pageLoader_resolveData())
+      .catch(()=>{
+         this.pageLoader_resolveData()
+       })
     },
     methods: {
       ...mapActions('meetups',['fetchMeetups'])

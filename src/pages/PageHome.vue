@@ -55,7 +55,6 @@
       })
     },
      created() {
-
        Promise.all([this.fetchMeetups(),this.fetchCategories()])
        .then(() => {
          this.pageLoader_resolveData()})

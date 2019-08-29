@@ -31,7 +31,7 @@
       </div>
     </section>
     <section class="section">
-      <div class="container">
+      <div v-if="pageLoader_isDataLoaded" class="container">
         <div class="columns">
           <div class="column is-3">
             <aside class="is-medium menu">
@@ -131,17 +131,30 @@
           </div>
         </div>
       </div>
+      <div v-else class="container">
+        <AppSpinner />
+      </div>
     </section>
   </div>
 </template>
 
 <script>
-import {mapActions,mapState} from 'vuex'
-export default {
+  import {mapActions,mapState} from 'vuex'
+  import PageLoader from '@/mixins/PageLoader'
+  import AppSpinner from '../components/shared/AppSpinner'
+  import { Promise } from 'q';
+  export default {
+    components:{
+      AppSpinner
+    },
+    mixins:[PageLoader],
     created(){
         const meetupId = this.$route.params.id
-        this.fetchThreads(meetupId)
-        this.fetchDetailMeetup(meetupId)
+        Promise.all([ this.fetchThreads(meetupId),this.fetchDetailMeetup(meetupId)])
+        .then(()=> this.pageLoader_resolveData())
+        .catch(()=>{
+          this.pageLoader_resolveData()
+        })
     },
     computed:{
         meetupCreator (){
