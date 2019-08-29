@@ -14,60 +14,91 @@
                 <div class="control">
                   <input 
                         v-model="form.username"
+                        @blur="$v.form.username.$touch()"
                         class="input is-large"
                         type="text"
                         placeholder="Username">
+                        <div v-if="$v.form.username.$error" class="form-error">
+                          <span v-if="!$v.form.username.required" class="help is-danger">Username is required</span>
+                        </div>
                 </div>
               </div>
               <div class="field">
                 <div class="control">
                   <input 
                         v-model="form.name"
+                        @blur="$v.form.name.$touch()"
                         class="input is-large"
                          type="text"
                          placeholder="Name">
+                         <div v-if="$v.form.name.$error" class="form-error">
+                          <span v-if="!$v.form.name.required" class="help is-danger">Name is required</span>
+                        </div>
                 </div>
               </div>
               <div class="field">
                 <div class="control">
                   <input 
                         v-model="form.email"
+                        @blur="$v.form.email.$touch()"
                         class="input is-large"
                          type="email"
                          placeholder="Your Email">
+                         <div v-if="$v.form.email.$error" class="form-error">
+                          <span v-if="!$v.form.email.required" class="help is-danger">Email is required</span>
+                          <span v-if="!$v.form.email.email" class="help is-danger">Email is not valid</span>
+                        </div>
                 </div>
               </div>
               <div class="field">
                 <div class="control">
                   <input 
                         v-model="form.avatar"
+                        @blur="$v.form.avatar.$touch()"
                         class="input is-large"
                          type="text"
                          placeholder="Avatar"
                          autocomplete="">
+                         <div v-if="$v.form.avatar.$error" class="form-error">
+                          <span v-if="!$v.form.avatar.url" class="help is-danger">Url is not valid</span>
+                          <span v-if="!$v.form.avatar.supportedFileType" class="help is-danger">Selected file type is not valid!</span>
+                        </div>
                 </div>
               </div>
               <div class="field">
                 <div class="control">
                   <input 
                         v-model="form.password"
+                        @blur="$v.form.password.$touch()"
                         class="input is-large"
                          type="password"
                          placeholder="Your Password"
                          autocomplete="new-password">
+                         <div v-if="$v.form.password.$error" class="form-error">
+                          <span v-if="!$v.form.password.required" class="help is-danger">Password is required</span>
+                          <span v-if="!$v.form.password.minLength" class="help is-danger">Password minimum is 6</span>
+                        </div>
                 </div>
               </div>
               <div class="field">
                 <div class="control">
                   <input 
                         v-model="form.password_confirmation"
+                        @blur="$v.form.password_confirmation.$touch()"
                         class="input is-large"
                          type="password"
                          placeholder="Password Confirmation"
                          autocomplete="off">
+                         <div v-if="$v.form.password_confirmation.$error" class="form-error">
+                          <span v-if="!$v.form.password_confirmation.required" class="help is-danger">Password confirmation is required</span>
+                          <span v-if="!$v.form.password_confirmation.sameAs" class="help is-danger">Password confimation is not match</span>
+
+                        </div>
                 </div>
               </div>
-              <button @click.prevent="register" type="submit" class="button is-block is-info is-large is-fullwidth">Register</button>
+              <button @click.prevent="register" 
+                      :disabled="isFormInvalid"
+                      type="submit" class="button is-block is-info is-large is-fullwidth">Register</button>
             </form>
           </div>
           <p class="has-text-grey">
@@ -83,6 +114,8 @@
 
 <script>
 import {mapActions} from 'vuex'
+import {required,email,minLength,url,sameAs} from 'vuelidate/lib/validators'
+import { supportedFileType } from '@/helpers/validators'
   export default {
       data() {
           return {
@@ -96,9 +129,41 @@ import {mapActions} from 'vuex'
               }
           }
       },
+      validations:{
+        form:{
+          username: {
+            required
+          },
+          name: {
+            required
+          },
+          email:{
+            required,
+            email
+          },
+          avatar: {
+            url,
+            supportedFileType
+          },
+          password:{
+            required,
+            minLength : minLength(6)
+          },
+          password_confirmation: {
+            required,
+            sameAs : sameAs('password')
+          } 
+        }
+      },
+      computed: {
+        isFormInvalid () {
+          return this.$v.form.$invalid
+        }
+      },
       methods:{
           ...mapActions('auth',['registerUser']),
           register () {
+              this.$v.form.$touch()
               this.registerUser(this.form)
           }
       }
