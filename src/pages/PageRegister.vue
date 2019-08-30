@@ -165,6 +165,11 @@ import { supportedFileType } from '@/helpers/validators'
           register () {
               this.$v.form.$touch()
               this.registerUser(this.form)
+              .then(()=>{
+                this.$router.push('/login')
+              })
+              .catch(err => console.log(err)
+              )
           }
       }
   }
