@@ -25,8 +25,18 @@ export default {
         registerUser(context,form){
             return Axios.post('/api/v1/users/register',form)
         },
-        getAuthUser({commit}){
-            return Axios.get('/api/v1/users/me')
+        getAuthUser({commit,getters}){
+            const authUser = getters['authUser']
+            if (authUser) {
+                return Promise.resolve(authUser)
+            }
+
+            const config = {
+                headers:{
+                    'Cache-Control':'no-cache'
+                }
+            }
+            return Axios.get('/api/v1/users/me',config)
             .then((res)=>{
                 const user = res.data
                 commit('setAuthUser',user)

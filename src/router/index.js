@@ -1,5 +1,6 @@
 import Vue from 'vue'
 import Router from 'vue-router'
+import store from '@/store'
 
 import PageHome from '../pages/PageHome.vue'
 import PageMeetupDetail from '../pages/PageMeetupDetail.vue'
@@ -7,6 +8,8 @@ import PageMeetupFind from '../pages/PageMeetupFind.vue'
 import PageNotFound from '../pages/PageNotFound.vue'
 import PageLogin from '../pages/PageLogin.vue'
 import PageRegsiter from '../pages/PageRegister.vue'
+import PageSecret from '../pages/PageSecret.vue'
+import PageNotAuthenticated from '../pages/PageNotAuthenticated.vue'
 
 Vue.use(Router)
 
@@ -16,6 +19,12 @@ const router = new Router({
             path:'/',
             name: 'PageHome',
             component:PageHome
+        },
+        {
+            path:'/meetups/secret',
+            name: 'PageSecret',
+            component : PageSecret,
+            meta : {onlyAuthUser:true}
         },
         {
             path:'/meetups/:id',
@@ -30,12 +39,19 @@ const router = new Router({
         {
             path: '/login',
             name : 'PageLogin',
-            component: PageLogin
+            component: PageLogin,
+            meta : {onlyGuestUser:true}
         },
         {
             path : '/register',
             name : 'PageRegister',
-            component : PageRegsiter
+            component : PageRegsiter,
+            meta : {onlyGuestUser:true}
+        },
+        {
+            path: '/401',
+            name : 'PageNotAuthenticated',
+            component : PageNotAuthenticated
         },
         {
             path: '*',
@@ -44,6 +60,29 @@ const router = new Router({
         }
     ],
     mode: 'history'
+})
+
+router.beforeEach((to,from,next)=>{
+    store.dispatch('auth/getAuthUser')
+    .then(() =>{
+        const isAuthenticated = store.getters['auth/isAuthenticated']
+        if (to.meta.onlyAuthUser) {
+            if (isAuthenticated) {
+                next()
+            }else{
+                next({name: 'PageNotAuthenticated'})
+            }
+        }else if(to.meta.onlyGuestUser){
+            if (isAuthenticated) {
+                next({name: 'PageHome'})
+            } else {
+                next()
+            }
+        }else{
+            next()
+        }
+
+    })
 })
 
 export default router
