@@ -1,7 +1,11 @@
-exports.onlyAuthUser = function(req,res,next){
-    if(req.isAuthenticated()){
-        return next()
-    }
+const passport = require('passport')
+//only for sessio auth
+// exports.onlyAuthUser = function(req,res,next){
+//     if(req.isAuthenticated()){
+//         return next()
+//     }
 
-    return res.status(401).send({errors:'Not Authenticated'})
-}
+//     return res.status(401).send({errors:'Not Authenticated'})
+// }
+
+exports.onlyAuthUser = passport.authenticate('jwt',{session:false})

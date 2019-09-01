@@ -20,7 +20,10 @@ exports.getCurrentUser = function (req,res,next) {
     return res.sendStatus(422)
   }
 
-  return res.json(user)
+  //only for auth session
+  // return res.json(user)
+
+  return res.json(user.toAuthJSON())
 }
 
 exports.register = function(req,res) {
@@ -88,10 +91,14 @@ exports.login = function(req,res,next) {
     }
 
     if(passportUser){
-      req.login(passportUser,function (err) {
-        if(err){next(err)}
-        return res.json(passportUser)
-      })
+      
+      //only for session auth
+      // req.login(passportUser,function (err) {
+      //   if(err){next(err)}
+      //   return res.json(passportUser)
+      // })
+
+      res.json(passportUser.toAuthJSON())
     }else{
       return res.status(400).send({
         errors:{
