@@ -67,7 +67,7 @@ userSchema.methods.toAuthJSON = function() {
       _id: this.id,
       avatar: this.avatar,
       name: this.name,
-      usename: this.username,
+      username: this.username,
       info:this.info,
       email:this.email,
       joinedMeetups: this.joinedMeetups,
