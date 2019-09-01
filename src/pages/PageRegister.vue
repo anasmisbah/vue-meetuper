@@ -132,10 +132,10 @@ import { supportedFileType } from '@/helpers/validators'
       validations:{
         form:{
           username: {
-            required
+            //required
           },
           name: {
-            required
+           // required
           },
           email:{
             required,
@@ -168,8 +168,11 @@ import { supportedFileType } from '@/helpers/validators'
               .then(()=>{
                 this.$router.push('/login')
               })
-              .catch(err => console.log(err)
-              )
+              .catch(errorMessage => {
+                this.$toasted.error(errorMessage,{
+                  duration:5000
+                })
+              })
           }
       }
   }

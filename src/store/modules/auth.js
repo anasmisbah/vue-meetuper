@@ -1,7 +1,7 @@
 import Axios from "axios";
 import jwt from 'jsonwebtoken'
 import axiosInstance from '@/services/axios'
-import { reject } from "q";
+import {rejectError} from '@/helpers'
 
 function checkTokenValidity(token){
     if (token) {
@@ -34,9 +34,11 @@ export default {
                 localStorage.setItem('vue-meetuper-jwt',user.token)
                 commit('setAuthUser',user)
             })
+            .catch(err =>rejectError(err))
         },
         registerUser(context,form){
             return Axios.post('/api/v1/users/register',form)
+            .catch(err => rejectError(err))
         },
         getAuthUser({commit,getters}){
             const authUser = getters['authUser']
@@ -46,13 +48,7 @@ export default {
                 return Promise.resolve(authUser)
             }
 
-            const config = {
-                headers:{
-                    'Cache-Control':'no-cache',
-                    'Authorization': token
-                }
-            }
-            return Axios.get('/api/v1/users/me',config)
+            return axiosInstance.get('/api/v1/users/me')
             .then((res)=>{
                 const user = res.data
                 localStorage.setItem('vue-meetuper-jwt',user.token)
@@ -77,7 +73,7 @@ export default {
             //     return err
             // })
 
-            return new Promise((resolve,reject)=>{
+            return new Promise((resolve)=>{
                 localStorage.removeItem('vue-meetuper-jwt')
                 commit('setAuthUser',null)
                 resolve(true)

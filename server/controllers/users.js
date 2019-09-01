@@ -32,7 +32,8 @@ exports.register = function(req,res) {
     if(!registerData.email){
       return res.status(422).json({
         errors:{
-          email:'is required'
+          email:'is required',
+          message:'Email is required'
         }
       })
     }
@@ -40,7 +41,8 @@ exports.register = function(req,res) {
     if (!registerData.password) {
       return res.status(422).json({
         errors:{
-          password: 'is required'
+          password: 'is required',
+          message:'password is required'
         }
       })
     }
@@ -48,7 +50,8 @@ exports.register = function(req,res) {
     if (registerData.password_confirmation != registerData.password) {
       return res.status(422).json({
         errors:{
-          password: 'is not the same as confirmation'
+          password: 'is not the same as confirmation',
+          message:'password doesnt match'
         }
       })
     }
@@ -66,13 +69,15 @@ exports.register = function(req,res) {
     })
 }
 
+
 exports.login = function(req,res,next) {
   const {email,password} = req.body
 
   if(!email){
     return res.status(422).json({
       errors:{
-        email:'is required'
+        email:'is required',
+        message:'Email is required'
       }
     })
   }
@@ -80,7 +85,8 @@ exports.login = function(req,res,next) {
   if (!password) {
     return res.status(422).json({
       errors:{
-        password: 'is required'
+        password: 'is required',
+        message:'Password is required'
       }
     })
   }
@@ -102,7 +108,7 @@ exports.login = function(req,res,next) {
     }else{
       return res.status(400).send({
         errors:{
-          'authentication' : 'Ooops, something went wrong!'
+          'message' : 'Invalid Password or Email'
         }
       })
     }
