@@ -5,7 +5,6 @@ export const rejectError = ({response = null}) => {
     if (response && response.data && response.data.errors) {
         message = response.data.errors.message
     }
-debugger
     return Promise.reject(message)
 }
 

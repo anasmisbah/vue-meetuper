@@ -132,10 +132,10 @@ import { supportedFileType } from '@/helpers/validators'
       validations:{
         form:{
           username: {
-            //required
+            required
           },
           name: {
-           // required
+           required
           },
           email:{
             required,
