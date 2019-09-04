@@ -26,5 +26,9 @@ export default {
                 return state.item
             })
         },
+        createMeetup(context,meetups){
+            console.log(meetups);
+            
+        }
     }
 }
