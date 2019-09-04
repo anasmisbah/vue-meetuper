@@ -44,7 +44,7 @@ exports.createMeetup = function(req, res) {
   meetup.status = 'active';
 
   meetup.save((err, createdMeetup) => {
-    if (errors) {
+    if (err) {
       return res.status(422).send({errors});
     }
 
