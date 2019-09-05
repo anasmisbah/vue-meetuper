@@ -26,7 +26,7 @@
         </div>
         <div class="is-pulled-right">
           <!-- We will handle this later (: -->
-          <button class="button is-danger">Leave Group</button>
+          <button v-if="isMember" class="button is-danger">Leave Group</button>
         </div>
       </div>
     </section>
@@ -82,10 +82,12 @@
               <h3 class="title is-3">About the Meetup</h3>
               <p>{{meetup.description}}</p>
               <!-- Join Meetup, We will handle it later (: -->
-              <button class="button is-primary">Join In</button>
+              <button v-if="canJoin" @click="joinMeetup" class="button is-primary">Join In</button>
               <!-- Not logged In Case, handle it later (: -->
-              <!-- <button :disabled="true"
-                      class="button is-warning">You need authenticate in order to join</button> -->
+              <button 
+                      v-if="!isAuthenticated"
+                      :disabled="true"
+                      class="button is-warning">You need authenticate in order to join</button>
             </div>
             <!-- Thread List START -->
             <div class="content is-medium">
@@ -163,11 +165,28 @@
         ...mapState({
           meetup : state => state.meetups.item,
           threads : state => state.threads.items
-        })
+        }),
+        isAuthenticated () {
+          return this.$store.getters['auth/isAuthenticated']
+        },
+        isMember () {
+          return this.$store.getters['auth/isMember'](this.meetup._id)
+        },
+        isMeetupOwner () {
+          return this.$store.getters['auth/isMeetupOwner'](this.meetupCreator._id)
+        },
+        canJoin () {
+          return !this.isMeetupOwner &&
+                  this.isAuthenticated &&
+                  !this.isMember
+        }
     },
     methods:{
       ...mapActions('meetups',['fetchDetailMeetup']),
-      ...mapActions('threads',['fetchThreads'])
+      ...mapActions('threads',['fetchThreads']),
+      joinMeetup () {
+        this.$store.dispatch('meetups/joinMeetups',this.meetup._id)
+      }
 
     }
 }

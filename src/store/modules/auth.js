@@ -24,6 +24,17 @@ export default {
         },
         isAuthenticated(state){
             return !!state.user
+        },
+        isMeetupOwner: (state) => (meetupCreaterid) => {
+            if (!state.user) {
+                return false
+            }
+            return state.user._id === meetupCreaterid
+        },
+        isMember : (state) => (meetupId) => {
+            return state.user &&
+            state.user['joinedMeetups'] &&
+            state.user['joinedMeetups'].includes(meetupId)
         }
     },
     actions:{
@@ -78,6 +89,10 @@ export default {
                 commit('setAuthUser',null)
                 resolve(true)
             })
+        },
+        addMeetupToAuthUser({commit,state},meetupId){
+            const userMeetups = [...state.user['joinedMeetups'],meetupId]
+            commit('setMeetupsToAuthUser',userMeetups)
         }
     },
     mutations:{
@@ -86,6 +101,9 @@ export default {
         },
         setAuthState(state, authState){
             return state.isAuthResolved = authState
+        },
+        setMeetupsToAuthUser(state,userMeetups){
+            return Vue.set(state.user,'joinedMeetups',userMeetups)
         }
     }
 

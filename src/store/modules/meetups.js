@@ -33,6 +33,23 @@ export default {
             return axiosInstance.post('/api/v1/meetups', meetups)
             .then(res => res.data)
             
+        },
+        joinMeetups({state,rootState,commit,dispatch},meetupId){
+            const user = rootState.auth.user
+
+            return axiosInstance.post(`/api/v1/meetups/${meetupId}/join`)
+            .then(res => {
+                dispatch('auth/addMeetupToAuthUser',meetupId,{root:true})
+
+                const joinedPeople = state.item.joinedPeople
+                commit('addUserToMeetup',[...joinedPeople,user])
+                return true
+            })
+        }
+    },
+    mutations:{
+        addUserToMeetup(state,joinedPeople){
+            return Vue.set(state.item,'joinedPeople',joinedPeople)
         }
     }
 }
