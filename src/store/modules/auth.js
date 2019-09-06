@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import Axios from "axios";
 import jwt from 'jsonwebtoken'
 import axiosInstance from '@/services/axios'
@@ -93,6 +94,13 @@ export default {
         addMeetupToAuthUser({commit,state},meetupId){
             const userMeetups = [...state.user['joinedMeetups'],meetupId]
             commit('setMeetupsToAuthUser',userMeetups)
+        },
+        removeMeetupFromAuthUser({commit,state},meetupId){
+            const userMeetupsIds = [...state.user['joinedMeetups']]
+            const index = userMeetupsIds.findIndex(userMeetupId => userMeetupId === meetupId)
+
+            userMeetupsIds.splice(index,1)
+            commit('setMeetupsToAuthUser',userMeetupsIds)
         }
     },
     mutations:{
