@@ -61,7 +61,7 @@
                 Threads
               </p>
               <ul>
-                <li v-for="thread in threads" :key="thread._id">{{ thread.title }}</li>
+                <li v-for="thread in orderedThreads" :key="thread._id">{{ thread.title }}</li>
               </ul>
               <p class="menu-label">
                 Who is Going
@@ -88,12 +88,15 @@
                       v-if="!isAuthenticated"
                       :disabled="true"
                       class="button is-warning">You need authenticate in order to join</button>
-              <ThreadCreateModal v-if="isMember || isMeetupOwner" :btnTitle="`Welcome ${authUser.username}, start a new thread`" :title="'Create Thread'"/>  
+              <ThreadCreateModal  v-if="isMember || isMeetupOwner"
+                                  @threadSubmitted="createThread" 
+                                  :btnTitle="`Welcome ${authUser.username}, start a new thread`" 
+                                  :title="'Create Thread'"/>  
             </div>
             <!-- Thread List START -->
             <div class="content is-medium">
               <h3 class="title is-3">Threads</h3>
-              <div v-for="thread in threads" :key="thread._id" class="box">
+              <div v-for="thread in orderedThreads" :key="thread._id" class="box">
                 <!-- Thread title -->
                 <h4 id="const" class="title is-3">{{ thread.title }}</h4>
                 <!-- Create new post, handle later -->
@@ -183,6 +186,12 @@
           return !this.isMeetupOwner &&
                   this.isAuthenticated &&
                   !this.isMember
+        },
+        orderedThreads(){
+          const orderThreads = [...this.threads]
+          return orderThreads.sort((thread,nextThread)=>{
+            return new Date(nextThread.createdAt) - new Date(thread.createdAt)
+          })
         }
     },
     methods:{
@@ -193,8 +202,15 @@
       },
       leaveMeetup (){
         this.$store.dispatch('meetups/leaveMeetup',this.meetup._id)
+      },
+      createThread({title,done}){
+        this.$store.dispatch('threads/postThread',{title: title,meetup: this.meetup._id})
+        .then(()=> {
+          this.$toasted.success('thread successfully created',{duration:3000})
+          done() 
+        
+        })
       }
-
     }
 }
 </script>

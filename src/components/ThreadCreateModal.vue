@@ -1,23 +1,23 @@
 <template>
   <div>
     <!-- TODO: Toggle Modal, set isOpen to oposite value of is Open -->
-    <button class="button is-success">{{ btnTitle }}</button>
+    <button class="button is-success" @click="isOpen = !isOpen">{{ btnTitle }}</button>
     <!-- TODO: create "isOpen" variable in data and set it to false -->
     <!-- TODO: Set is-active class when isOpen is true -->
-    <div :class="['modal','is-active']">
+    <div :class="['modal',{'is-active': isOpen}]">
       <div class="modal-background"></div>
       <div class="modal-card">
         <header class="modal-card-head">
           <p class="modal-card-title">{{ title }}</p>
           <!-- TODO: Close Modal set isOpen to false -->
-          <button class="delete" aria-label="close"></button>
+          <button @click="isOpen = false" class="delete" aria-label="close"></button>
         </header>
         <section class="modal-card-body">
           <form>
             <div class="field">
               <label class="title">What would you like to ask?</label>
               <!-- TODO: Create "form" object in data containing "title" and bind it to textarea -->
-              <textarea 
+              <textarea v-model="form.title"
                         class="textarea"
                         placeholder="Just write something that interest you (:"
                         rows="10"></textarea>
@@ -26,9 +26,9 @@
         </section>
         <footer class="modal-card-foot">
           <!-- TODO: Emit thread Create -->
-          <button class="button is-success">Save changes</button>
+          <button @click="threadSubmitted" class="button is-success">Save changes</button>
           <!-- TODO: Close Modal set isOpen to false -->
-          <button class="button">Cancel</button>
+          <button @click="isOpen = false" class="button">Cancel</button>
         </footer>
       </div>
     </div>
@@ -48,7 +48,24 @@ export default {
             required:false,
             default:'Create'
         }
-    }
+    },
+    data() {
+        return {
+            isOpen : false,
+            form :{
+                title:null
+            }
+        }
+    },
+    methods: {
+        threadSubmitted () {
+            const {title} = this.form
+            this.$emit('threadSubmitted',{title,done : () =>{
+                this.form.title = null
+                this.isOpen = false
+            }})
+        }
+    },
 }
 </script>
 
