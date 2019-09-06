@@ -42,7 +42,9 @@
               </div>
               <button @click.prevent="login" 
                       :disabled="isFormInvalid"
+                      v-if="isNotClicked"
                       class="button is-block is-info is-large is-fullwidth">Login</button>
+              <AppSpinner v-else/>
             </form>
           </div>
           <p class="has-text-grey">
@@ -59,9 +61,14 @@
 <script>
 import {mapActions} from 'vuex'
 import {required,email} from 'vuelidate/lib/validators'
+import AppSpinner from '../components/shared/AppSpinner'
   export default {
+    components:{
+      AppSpinner
+    },
       data() {
           return {
+            isNotClicked:true,
               form:{
                   email:null,
                   password:null
@@ -89,6 +96,7 @@ import {required,email} from 'vuelidate/lib/validators'
           ...mapActions('auth',['loginWithEmailAndPassword']),
           login () {
               this.$v.form.$touch()
+              this.isNotClicked = false
               this.loginWithEmailAndPassword(this.form)
               .then(()=> this.$router.push('/'))
               .catch(errorMessage => {
