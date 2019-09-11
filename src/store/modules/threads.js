@@ -1,3 +1,4 @@
+import Vue from 'vue'
 import axios from 'axios'
 import axiosInstance from '@/services/axios'
 
@@ -25,6 +26,29 @@ export default {
                 commit('addItemToArray',{item:createdThread,index,resource:'threads'},{root:true})
                 return createdThread
             })
+        },
+        sendPost({state,commit,dispatch},{text,threadId}){
+            const postCreate = {text,thread:threadId}
+            
+            return axiosInstance.post('/api/v1/posts',postCreate)
+            .then((res)=>{
+                const postCreated = res.data
+                dispatch('addPostToThread',{post: postCreated,threadId})
+                return postCreated
+            })
+        },
+        addPostToThread({state,commit},{post,threadId}){
+            const indexThread = state.items.findIndex(thread => thread._id === threadId)
+            if (indexThread > -1) {
+                const posts = state.items[indexThread].posts
+                posts.unshift(post)
+                commit('savePostToThread',{posts,indexThread})
+            }
+        }
+    },
+    mutations:{
+        savePostToThread(state,{posts,indexThread}){
+            Vue.set(state.items[indexThread],'posts',posts)
         }
     }
 }

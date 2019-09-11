@@ -5,7 +5,7 @@
                 <!-- Thread title -->
                 <h4 id="const" class="title is-3">{{ thread.title }}</h4>
                 <!-- Create new post, handle later -->
-                <PostCreate v-if="canPost"/>
+                <PostCreate v-if="canPost" :threadId="thread._id"/>
                 <!-- Create new post END, handle later -->
                 <!-- Posts START -->
                 <article v-for="post in thread.posts" :key="post._id" class="media post-item">
