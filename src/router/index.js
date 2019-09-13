@@ -11,6 +11,7 @@ import PageRegsiter from '../pages/PageRegister.vue'
 import PageSecret from '../pages/PageSecret.vue'
 import PageNotAuthenticated from '../pages/PageNotAuthenticated.vue'
 import PageMeetupCreate from '../pages/PageMeetupCreate.vue'
+import PageProfile from '../pages/PageProfile.vue'
 
 Vue.use(Router)
 
@@ -54,6 +55,12 @@ const router = new Router({
             name : 'PageRegister',
             component : PageRegsiter,
             meta : {onlyGuestUser:true}
+        },
+        {
+            path:'/me',
+            name: 'PageProfile',
+            component : PageProfile,
+            meta : {onlyAuthUser:true}
         },
         {
             path: '/401',

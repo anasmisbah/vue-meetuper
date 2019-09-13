@@ -101,11 +101,20 @@ export default {
 
             userMeetupsIds.splice(index,1)
             commit('setMeetupsToAuthUser',userMeetupsIds)
+        },
+        updateUser({commit},user){
+            return axiosInstance.patch(`/api/v1/users/${user._id}`,user)
+            .then((res)=>{
+                const userUpdated = res.data
+                commit('setAuthUser',userUpdated)
+                return userUpdated
+            })
         }
     },
     mutations:{
         setAuthUser(state,user){
             return state.user = user
+            // return Vue.set(state.user,{},user)
         },
         setAuthState(state, authState){
             return state.isAuthResolved = authState
