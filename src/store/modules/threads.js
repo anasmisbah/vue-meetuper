@@ -27,7 +27,7 @@ export default {
                 return createdThread
             })
         },
-        sendPost({state,commit,dispatch},{text,threadId}){
+        sendPost({dispatch},{text,threadId}){
             const postCreate = {text,thread:threadId}
             
             return axiosInstance.post('/api/v1/posts',postCreate)

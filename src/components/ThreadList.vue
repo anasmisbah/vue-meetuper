@@ -21,7 +21,7 @@
                         <strong class="author">{{ post.user.name }}</strong>
                         {{' '}}
                         <!-- Post Updated at -->
-                        <small class="post-time">{{ post.createdAt | formatDate('LLL') }}</small>
+                        <small class="post-time">{{ post.createdAt | fromNow }}</small>
                         <br>
                         <p class="post-content-message">{{ post.text }}</p>
                       </div>

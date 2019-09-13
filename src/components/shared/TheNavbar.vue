@@ -90,6 +90,9 @@
     methods:{
       userLogout () {
         this.$store.dispatch('auth/userLogout')
+        .then(()=>{
+          this.$router.push('/')
+        })
       }
     }
   }

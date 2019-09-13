@@ -129,6 +129,19 @@
         .catch(()=>{
           this.pageLoader_resolveData()
         })
+
+        // this.$socket.on('meetup/postPublished',function (post) {
+        //   alert(post.text) 
+        // })
+
+        if (this.isAuthenticated) {
+          this.$socket.emit('meetup/subscribe',meetupId)
+          this.$socket.on('meetup/postPublished',this.addPostToThreadHandler)
+        }
+    },
+    destroyed() {
+      this.$socket.removeListener('meetup/postPublished',this.addPostToThreadHandler)
+      this.$socket.emit('meetup/unsubscribe',this.meetup._id)
     },
     computed:{
         meetupCreator (){
@@ -165,7 +178,10 @@
     },
     methods:{
       ...mapActions('meetups',['fetchDetailMeetup']),
-      ...mapActions('threads',['fetchThreads']),
+      ...mapActions('threads',['fetchThreads','addPostToThread']),
+      addPostToThreadHandler(post){
+          this.addPostToThread({post,threadId:post.thread})
+      },
       joinMeetup () {
         this.$store.dispatch('meetups/joinMeetups',this.meetup._id)
       },
