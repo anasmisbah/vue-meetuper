@@ -7,6 +7,7 @@ import categories from './modules/categories'
 import threads from './modules/threads'
 import auth from './modules/auth'
 import stats from './modules/stats'
+import meta from './modules/meta'
 
 Vue.use(Vuex)
 
@@ -17,7 +18,8 @@ export default new Vuex.Store({
         categories,
         threads,
         auth,
-        stats
+        stats,
+        meta
     },
     //didalam atribut state kita menjaga data kita agar dapat dibagikan kepada semua komponen yang ada
     // state:{

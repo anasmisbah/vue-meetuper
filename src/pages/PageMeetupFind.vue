@@ -7,10 +7,10 @@
           <div class="level">
             <div class="level-left">
               <div class="level-item">
-                <input type="text" class="input" placeholder="New York">
+                <input @keyup.enter="fetchMeetupsSearch" v-model="searchedLocation" type="text" class="input" placeholder="New York">
               </div>
-              <div class="level-item">
-                <span>Meetups in New York, USA</span>
+              <div v-if="searchedLocation && meetups && meetups.length > 0" class="level-item">
+                <span>Meetups in {{ meetups[0].location }}</span>
               </div>
             </div>
             <div class="level-right">
@@ -25,7 +25,7 @@
     </div>
     <div v-if="pageLoader_isDataLoaded" class="container">
       <section class="section page-find">
-        <div class="columns cover is-multiline">
+        <div v-if="meetups && meetups.length > 0" class="columns cover is-multiline">
           <div v-for="meetup of meetups" :key="meetup._id" class="column is-one-third" :style="{'min-height': '160px'}">
             <router-link :to="'/meetups/' + meetup._id" class="meetup-card-find"
                href="#"
@@ -47,7 +47,7 @@
             </router-link>
           </div>
         </div>
-        <div>
+        <div v-else>
           <span class="tag is-warning is-large">No meetups found :( You might try to change search criteria (:</span>
         </div>
       </section>
@@ -63,6 +63,12 @@
   import PageLoader from '@/mixins/PageLoader'
   import AppSpinner from '../components/shared/AppSpinner'
   export default {
+    data() {
+      return {
+        searchedLocation : this.$store.getters['meta/location'],
+        filter:{}
+      }
+    },
     components:{
       AppSpinner
     },
@@ -73,14 +79,22 @@
       })
     },
     created () {
-      Promise.all([this.fetchMeetups()])
-      .then(()=> this.pageLoader_resolveData())
-      .catch(()=>{
-         this.pageLoader_resolveData()
-       })
+      this.fetchMeetupsSearch()
     },
     methods: {
-      ...mapActions('meetups',['fetchMeetups'])
+      ...mapActions('meetups',['fetchMeetups']),
+      fetchMeetupsSearch () {
+        
+        if (this.searchedLocation) {
+          this.filter['location'] = this.searchedLocation.toLowerCase().replace(/[\s,]+/g,'').trim()
+        }
+        
+        Promise.all([this.fetchMeetups({filter:this.filter})])
+        .then(()=> this.pageLoader_resolveData())
+        .catch(()=>{
+          this.pageLoader_resolveData()
+        })
+      }
     },
   }
 </script>
