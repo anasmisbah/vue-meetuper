@@ -23,6 +23,13 @@ const router = new Router({
             component:PageHome
         },
         {
+            path:'/find/:category',
+            name : 'PageFindCategory',
+            component: PageMeetupFind,
+            props:true // super interesting
+            
+        },
+        {
             path:'/find',
             name : 'PageFind',
             component: PageMeetupFind

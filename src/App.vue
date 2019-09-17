@@ -1,7 +1,7 @@
 <template>
   <div v-if="isAuthResolved && isLocationResolved" id="app">
     <TheNavbar />
-    <router-view class="page-wrapper"></router-view>
+    <router-view class="page-wrapper" :key="$route.path"></router-view>
     <TheFooter />
   </div>
 </template>

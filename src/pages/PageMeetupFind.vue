@@ -12,6 +12,7 @@
               <div v-if="searchedLocation && meetups && meetups.length > 0" class="level-item">
                 <span>Meetups in {{ meetups[0].location }}</span>
               </div>
+              <button @click="cancelCategory" v-if="category" class="button is-danger">{{ category }} X</button>
             </div>
             <div class="level-right">
               <div class="level-item">
@@ -63,6 +64,12 @@
   import PageLoader from '@/mixins/PageLoader'
   import AppSpinner from '../components/shared/AppSpinner'
   export default {
+    props:{
+      category:{
+        type: String,
+        required:false
+      }
+    },
     data() {
       return {
         searchedLocation : this.$store.getters['meta/location'],
@@ -85,8 +92,13 @@
       ...mapActions('meetups',['fetchMeetups']),
       fetchMeetupsSearch () {
         
+        this.pageLoader_isDataLoaded = false
         if (this.searchedLocation) {
           this.filter['location'] = this.searchedLocation.toLowerCase().replace(/[\s,]+/g,'').trim()
+        }
+
+        if (this.category) {
+          this.filter['category'] = this.category
         }
         
         Promise.all([this.fetchMeetups({filter:this.filter})])
@@ -94,6 +106,9 @@
         .catch(()=>{
           this.pageLoader_resolveData()
         })
+      },
+      cancelCategory(){
+        this.$router.push({name:'PageFind'})
       }
     },
   }
