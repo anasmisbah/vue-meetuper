@@ -1,6 +1,6 @@
 <template>
   <div  class="column is-one-third">
-    <div class="card large">
+    <div class="card is-hoverable large">
       <router-link :to="{name: 'PageMeetupDetail',params:{id: meetup._id}}" class="card-meetup-link">
         <div class="card-image">
           <figure class="image is-4by3">
@@ -20,7 +20,7 @@
             <div class="media-content">
                 <p class="title is-4 no-padding is-marginless">{{ meetup.title }}</p>
                 <!-- <p><span class="title is-6"><a href="http://twitter.com/#">@twitterid</a></span></p> -->
-                <span class="tag is-success">{{ meetup.category.name }}</span>
+                <span class="tag is-success">{{ meetup.category.name | capitalize}}</span>
                 <p class="subtitle is-7">{{ meetup.location }}</p>
             </div>
           </div>
@@ -45,8 +45,17 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
   .card-meetup-link{
     color:black;
+  }
+
+  .is-hoverable {
+    transition: 0.3s;
+    &:hover {
+      -webkit-box-shadow: 2px 4px 15px -2px rgba(189,189,189,1);
+      -moz-box-shadow: 2px 4px 15px -2px rgba(189,189,189,1);
+      box-shadow: 2px 4px 15px -2px rgba(189,189,189,1);
+    }
   }
 </style>

@@ -98,6 +98,9 @@
                         :canPost="canPost"
             />  
             <!-- Thread List END -->
+            <button v-if="!isAllThreadsLoaded"
+                    @click="fetchThreadsHandler"
+                    class="button is-primary">Load More Threads</button>
           </div>
         </div>
       </div>
@@ -121,10 +124,16 @@
       ThreadCreateModal,
       ThreadList
     },
+    data() {
+      return {
+        threadPageNum:1,
+        threadPageSize:5  
+      }
+    },
     mixins:[PageLoader],
     created(){
         const meetupId = this.$route.params.id
-        Promise.all([ this.fetchThreads(meetupId),this.fetchDetailMeetup(meetupId)])
+        Promise.all([ this.fetchThreadsHandler({meetupId,init:true}),this.fetchDetailMeetup(meetupId)])
         .then(()=> this.pageLoader_resolveData())
         .catch(()=>{
           this.pageLoader_resolveData()
@@ -150,7 +159,8 @@
         ...mapState({
           meetup : state => state.meetups.item,
           threads : state => state.threads.items,
-          authUser : state => state.auth.user
+          authUser : state => state.auth.user,
+          isAllThreadsLoaded:state => state.threads.isThreadsLoaded
         }),
         isAuthenticated () {
           return this.$store.getters['auth/isAuthenticated']
@@ -179,6 +189,18 @@
     methods:{
       ...mapActions('meetups',['fetchDetailMeetup']),
       ...mapActions('threads',['fetchThreads','addPostToThread']),
+      fetchThreadsHandler({meetupId,init}){
+        const filter = {
+          pageNum : this.threadPageNum,
+          pageSize : this.threadPageSize
+        }
+
+        this.fetchThreads({meetupId: meetupId || this.meetup._id,filter,init})
+        .then(()=>{
+          this.threadPageNum++
+        })
+
+      },
       addPostToThreadHandler(post){
           this.addPostToThread({post,threadId:post.thread})
       },

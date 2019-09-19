@@ -15,6 +15,7 @@ export default {
 
             const url = applyFilters('/api/v1/meetups',options.filter)    
 
+            
 
             return axios.get(url)
             .then(res =>{
@@ -64,11 +65,23 @@ export default {
                 commit('addUserToMeetup',joinedPeople)
                 
             })
+        },
+        updateMeetup({commit,state},meetupData){
+            meetupData.processedLocation = meetupData.location.toLowerCase().replace(/[\s,]+/g,'').trim()
+            return axiosInstance.patch(`/api/v1/meetups/${meetupData._id}`,meetupData)
+            .then(res => {
+                const meetup = res.data
+                commit('mergeMeetup',meetup)
+                return state.item
+            })
         }
     },
     mutations:{
         addUserToMeetup(state,joinedPeople){
             Vue.set(state.item,'joinedPeople',joinedPeople)
+        },
+        mergeMeetup(state,meetupData){
+            state.item = {...state.item,...meetupData}
         }
     }
 }
